@@ -1,0 +1,28 @@
+name: Build Windows
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate project files
+        run: |
+          cd build
+          ./premake5.exe gmake
+
+      - name: Build Release
+        run: |
+          make config=release_x64
+
+      - name: Upload Windows binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: RayTTT-windows
+          path: bin/Release/RayTTT.exe

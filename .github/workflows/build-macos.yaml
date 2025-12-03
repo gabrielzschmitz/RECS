@@ -1,0 +1,32 @@
+name: Build macOS
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew update
+
+      - name: Generate project files
+        run: |
+          cd build
+          ./premake5.osx gmake
+
+      - name: Build Release
+        run: |
+          make config=release_x64
+
+      - name: Upload macOS binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: RayTTT-macos
+          path: bin/Release/RayTTT
