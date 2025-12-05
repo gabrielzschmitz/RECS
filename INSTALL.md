@@ -53,7 +53,7 @@ platforms including web builds.
 
 5. Run the game:
    ```bash
-   ./bin/Release/Game
+   ./bin/Release/RECS
    ```
 
 ---
@@ -73,7 +73,7 @@ platforms including web builds.
    ```
 3. Run the executable:
    ```cmd
-   bin\Release\Game.exe
+   bin\Release\RECS.exe
    ```
 
 > **Note:** Use modern MinGW-W64 from
@@ -118,7 +118,7 @@ platforms including web builds.
 
 4. Run the game:
    ```bash
-   ./bin/Release/Game
+   ./bin/Release/RECS
    ```
 
 #### Wayland Support
@@ -159,7 +159,7 @@ bear -- make config=release_x64 VERBOSE=1
 
 4. Run the game:
    ```bash
-   ./bin/Release/Game
+   ./bin/Release/RECS
    ```
 
 #### Alternative: Xcode
@@ -214,14 +214,14 @@ Then open the generated Xcode project.
 
 5. Run locally:
    ```bash
-   emrun bin/Release/Game.html
+   emrun bin/Release/RECS.html
    ```
 
 The web build will generate:
-- `Game.html` - Main page
-- `Game.js` - JavaScript runtime
-- `Game.wasm` - WebAssembly binary
-- `Game.data` - Packaged resources
+- `RECS.html` - Main page
+- `RECS.js` - JavaScript runtime
+- `RECS.wasm` - WebAssembly binary
+- `RECS.data` - Packaged resources
 
 You can host these files on any web server to deploy your game online.
 
@@ -373,7 +373,7 @@ make config=release_x64
 ## Project Structure
 
 ```
-Game/
+RECS/
 ├── build/               # Premake executables
 ├── build_files/         # Generated project files (created by Premake)
 ├── bin/                 # Compiled binaries
