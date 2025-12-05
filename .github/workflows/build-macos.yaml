@@ -28,5 +28,5 @@ jobs:
       - name: Upload macOS binary
         uses: actions/upload-artifact@v4
         with:
-          name: RayTTT-macos
-          path: bin/Release/RayTTT
+          name: Game-macos
+          path: bin/Release/Game

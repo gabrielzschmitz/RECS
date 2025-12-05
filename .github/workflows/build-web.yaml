@@ -39,9 +39,9 @@ jobs:
       - name: Upload Web build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: RayTTT-web
+          name: Game-web
           path: |
-            bin/Release/RayTTT.html
-            bin/Release/RayTTT.js
-            bin/Release/RayTTT.wasm
-            bin/Release/RayTTT.data
+            bin/Release/Game.html
+            bin/Release/Game.js
+            bin/Release/Game.wasm
+            bin/Release/Game.data
