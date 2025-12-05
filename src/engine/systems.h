@@ -1,105 +1,45 @@
 #pragma once
-#include "../draw.h"
+#include "../entities/conway.h"
 #include "components.h"
 #include "ecs.h"
 #include "raylib.h"
-#include <cmath>
 
-inline void RenderSprites(ECS &ecs, float dt) {
-  ecs.view<SpriteComponent>([&](Entity e, SpriteComponent &s) {
-    TransformComponent &t = ecs.get<TransformComponent>(e);
+inline void SimulateConway(ECS &ecs) {
+  for (int y = 0; y < ACTIVE_H; ++y) {
+    for (int x = 0; x < ACTIVE_W; ++x) {
+      int liveNeighbors = 0;
 
-    Rectangle srcRect = {0, 0, s.size.x, s.size.y};
-    Vector2 origin = s.origin;
-
-    if (ecs.has<AnimationComponent>(e)) {
-      AnimationComponent &anim = ecs.get<AnimationComponent>(e);
-      auto &frames = anim.animations[anim.selectedAnimation];
-      AnimationFrame &frame = frames[anim.currentFrame];
-
-      frame.elapsed += dt;
-      if (frame.elapsed >= frame.duration) {
-        frame.elapsed -= frame.duration;
-        anim.currentFrame = (anim.currentFrame + 1) % frames.size();
+      for (auto &offset : neighbor_offsets) {
+        int nx = x + static_cast<int>(offset.x);
+        int ny = y + static_cast<int>(offset.y);
+        if (nx >= 0 && nx < ACTIVE_W && ny >= 0 && ny < ACTIVE_H)
+          if (currentState[index(nx, ny)])
+            liveNeighbors++;
       }
 
-      srcRect = {frame.origin.x, frame.origin.y, frame.size.x, frame.size.y};
-      origin = {0, 0};
-    }
+      bool alive = currentState[index(x, y)];
+      bool nextAlive = false;
 
-    if (ecs.has<DirectionComponent>(e)) {
-      DirectionComponent &dir = ecs.get<DirectionComponent>(e);
-      if (dir.dir.x == Directions::LEFT.x)
-        srcRect.width = -srcRect.width;
-    }
+      if (alive)
+        nextAlive = (liveNeighbors == 2 || liveNeighbors == 3);
+      else
+        nextAlive = (liveNeighbors == 3);
 
-    Rectangle dstRect = {t.coords.x, t.coords.y, abs(srcRect.width) * t.scale,
-                         srcRect.height * t.scale};
-    DrawTexturePro(s.src, srcRect, dstRect, origin, 0, WHITE);
+      nextState[index(x, y)] = nextAlive;
+    }
+  }
+
+  for (int i = 0; i < (int)gridEntities.size(); ++i) {
+    CellComponent &cell = ecs.get<CellComponent>(gridEntities[i]);
+    cell.color = nextState[i] ? WHITE : BLACK;
+  }
+
+  currentState.swap(nextState);
+}
+
+inline void RenderCells(ECS &ecs) {
+  ecs.view<CellComponent>([&](Entity e, CellComponent &quad) {
+    if (is_alive(quad.color))
+      DrawRectangleRec(quad.rect, quad.color);
   });
-}
-
-inline void MovePlayers(ECS &ecs, float dt, float moveSpeed) {
-  ecs.view<PlayerTag, TransformComponent, DirectionComponent>(
-      [&](Entity e, PlayerTag &, TransformComponent &t,
-          DirectionComponent &dirComp) {
-        bool isMoving = false;
-        Vector2 movement = {0, 0};
-
-        if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
-          movement.y -= 1;
-          isMoving = true;
-        }
-        if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
-          movement.y += 1;
-          isMoving = true;
-        }
-        if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
-          movement.x -= 1;
-          isMoving = true;
-        }
-        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
-          movement.x += 1;
-          isMoving = true;
-        }
-
-        if (isMoving) {
-          float length =
-              sqrt(movement.x * movement.x + movement.y * movement.y);
-          if (length != 0) {
-            movement.x /= length;
-            movement.y /= length;
-          }
-          t.coords.x += movement.x * moveSpeed * dt;
-          t.coords.y += movement.y * moveSpeed * dt;
-
-          if (length > 0.0f)
-            dirComp.dir = movement;
-        }
-
-        // Switch animation state based on movement
-        if (ecs.has<AnimationComponent>(e)) {
-          AnimationComponent &anim = ecs.get<AnimationComponent>(e);
-
-          std::string newAnim = isMoving ? "running" : "idle";
-
-          if (anim.selectedAnimation != newAnim) {
-            anim.selectedAnimation = newAnim;
-            anim.currentFrame = 0;
-
-            auto &frames = anim.animations[anim.selectedAnimation];
-            for (auto &frame : frames)
-              frame.elapsed = 0.0f;
-          }
-        }
-      });
-}
-
-inline void DrawBoundingBoxes(ECS &ecs) {
-  ecs.view<BoundingBoxComponent, TransformComponent>(
-      [&](Entity e, BoundingBoxComponent &bbox, TransformComponent &t) {
-        bbox.rect.x = t.coords.x;
-        bbox.rect.y = t.coords.y;
-        DrawBoundingBox(bbox.rect, bbox.thickness, bbox.padding, bbox.color);
-      });
 }

@@ -1,56 +1,51 @@
 // main.cpp
 #include "engine/ecs.h"
 #include "engine/systems.h"
-#include "entities/player.h"
+#include "entities/conway.h"
+#include "globals.h"
 #include "raylib.h"
 #include "resource_dir.h"
-
-const int GAME_W = 320;
-const int GAME_H = 180;
-const int SCALE = 4;
 
 int main() {
   int W = GAME_W * SCALE;
   int H = GAME_H * SCALE;
 
   InitWindow(W, H, "GAME");
-  SetTargetFPS(240);
 
   SearchAndSetResourceDir("resources");
 
-  // Render texture (pixel-perfect)
-  RenderTexture2D canvas = LoadRenderTexture(GAME_W, GAME_H);
-  SetTextureFilter(canvas.texture, TEXTURE_FILTER_POINT);
+  // Render (pixel-perfect)
+  Camera2D camera = {0};
+  camera.target = (Vector2){(float)GAME_W / 2, (float)GAME_H / 2};
+  camera.offset = (Vector2){(float)W / 2, (float)H / 2};
+  camera.zoom = SCALE;
+  defaultFont = LoadFont("fonts/simple-font.png");
 
   // ECS
   ECS ecs;
-  Entity player = CreatePlayer(ecs);
-
-  const float moveSpeed = 85.0f;
+  CreateConway(ecs);
 
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
 
     // UPDATE
-    MovePlayers(ecs, dt, moveSpeed);
+    SimulateConway(ecs);
 
     // DRAW
     BeginDrawing();
-    BeginTextureMode(canvas);
-    ClearBackground(BLANK);
+    ClearBackground((Color){20, 22, 34, 255});
 
-    ClearBackground(BLACK);
-    DrawBoundingBoxes(ecs);
-    RenderSprites(ecs, dt);
+    BeginMode2D(camera);
+    RenderCells(ecs);
 
-    EndTextureMode();
-    DrawTexturePro(canvas.texture, {0, 0, (float)GAME_W, -(float)GAME_H},
-                   {0, 0, (float)W, (float)H}, {0, 0}, 0.0f, WHITE);
+    EndMode2D();
+    DrawTextEx(defaultFont, TextFormat("FPS: %d", GetFPS()), (Vector2){10, 10},
+               defaultFont.baseSize * 2, 1, (Color){255, 80, 150, 255});
     EndDrawing();
   }
 
   // Cleanup
-  UnloadRenderTexture(canvas);
+  UnloadFont(defaultFont);
   CloseWindow();
   return 0;
 }

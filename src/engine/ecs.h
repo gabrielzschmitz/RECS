@@ -464,3 +464,15 @@ private:
         tup);
   }
 };
+
+namespace std {
+template <> struct hash<Entity> {
+  size_t operator()(const Entity &e) const noexcept {
+    // Combine the two uint32_t members into one hash value.
+    // Simple way: hash index and version, then combine with XOR and a shift.
+    size_t h1 = std::hash<uint32_t>{}(e.index);
+    size_t h2 = std::hash<uint32_t>{}(e.version);
+    return h1 ^ (h2 << 1);
+  }
+};
+} // namespace std
