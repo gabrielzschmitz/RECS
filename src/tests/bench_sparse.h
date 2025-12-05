@@ -7,13 +7,11 @@
 #include "../engine/sparse_set.h"
 #include "test_lib.h"
 
-// Test count
-constexpr int N = 10'000'000;
-
 // ------------------------------------------------------------
 // BENCHMARKS
 // ------------------------------------------------------------
 BENCH(bench_sparse_insert) {
+  const int N = 10'000'000;
   std::vector<uint32_t> keys(N);
   for (int i = 0; i < N; i++)
     keys[i] = i;
@@ -27,6 +25,7 @@ BENCH(bench_sparse_insert) {
 }
 
 BENCH(bench_sparse_lookup) {
+  const int N = 10'000'000;
   SparseSet<uint32_t, uint32_t> s;
   for (int i = 0; i < N; i++)
     s.insert(i, i + 1);
@@ -47,6 +46,7 @@ BENCH(bench_sparse_lookup) {
 }
 
 BENCH(bench_sparse_iteration) {
+  const int N = 10'000'000;
   SparseSet<uint32_t, uint32_t> s;
   for (int i = 0; i < N; i++)
     s.insert(i, i + 1);
@@ -59,6 +59,7 @@ BENCH(bench_sparse_iteration) {
 }
 
 BENCH(bench_sparse_erase) {
+  const int N = 10'000'000;
   std::vector<uint32_t> keys(N);
   for (int i = 0; i < N; i++)
     keys[i] = i;
@@ -75,6 +76,7 @@ BENCH(bench_sparse_erase) {
 }
 
 BENCH(bench_sparse_random_insert_erase) {
+  const int N = 10'000'000;
   constexpr int OPS = N / 2;
 
   std::vector<uint32_t> keys(N);
