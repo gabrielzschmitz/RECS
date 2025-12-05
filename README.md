@@ -19,19 +19,19 @@ RECS and raylib.
 
 ## Quick Start
 
-### 1. Clone the repository
+#### 1. Clone the repository
 
 ```sh
 git clone https://github.com/gabrielzschmitz/RECS.git
 cd Game
 ```
 
-### 2. Build and run
+#### 2. Build and run
 
 Follow the platform-specific instructions in [INSTALL.md](INSTALL.md) to build
 and run the example.
 
-### 3. Explore the example
+#### 3. Explore the example
 
 * **`src/engine`** — The core ECS library (RECS) components, systems, and
 utilities.
@@ -49,6 +49,13 @@ boxes
 * Systems to render sprites, animate frames, handle player input, and draw
 bounding boxes
 * Example of animated player character with keyboard controls
+
+<p align="center">
+    <img src="./resources/demo.gif" alt="Demo Screenshot" style="border-radius: 8px;">
+</p>
+<p align="center">
+    <i>RECS example with sprite rendering, animation, and player movement.</i>
+</p>
 
 ---
 
