@@ -18,7 +18,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y build-essential
 
       - name: Build tests
-        run: g++ -std=c++17 -O3 -march=native -o tests src/tests/tests.cpp
+        run: g++ -std=c++17 -O3 -march=native -DRUN_TESTS -o tests src/tests/tests.cpp
 
       - name: Run tests
         run: ./tests
